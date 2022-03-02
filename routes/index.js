@@ -6,13 +6,25 @@ router.get("/", async (req, res) => {
     try {
         const subjects = await Subject.find({})
         res.render("index", {
-          subjects: subjects,
+          subjects: subjects
         });
     } catch {
-        console.log("EOROROR")
         res.redirect("/")
     }
     
 })
 
+router.post("/saveTime", (req, res) => {
+    console.log(req.body)
+    var time = parseInt(req.body.time);
+    var condition = { title: req.body.subjectID };
+    var update = { $inc: { timeSpent: time } };
+    Subject.updateOne(condition, update, (err, subject) => {
+        if (err) {
+            console.log(err)
+        } else {
+            res.json(subject)
+        }
+    });
+})
 module.exports = router

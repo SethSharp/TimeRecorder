@@ -1,39 +1,33 @@
-
 <br>
 
-This is the time recorder app (INDEX), the home/where you record times of subjects
-
-
-<br>
-<br>
-
-<% subjects.forEach(subject => { %>
-    <div> <%= subject.title %>  </div>
-<% }) %>
-
-<select id="subject-select">
+<select id="subject-select" onchange="changeSubject()">
     <% subjects.forEach(subject => { %>
         <option label="<%= subject.title %>" value="<%= subject.title %>">
     <% }) %>
 </select>
 
+<br>
 
-
+<label id="selected-subject-lbl"> </label>
 
 <p>
     <span id="hours">00</span>:
     <span id="minutes">00</span>:
     <span id="seconds">00</span>
 </p>
+
+
 <button id="button-start">
     Start
 </button>
 <button id="button-stop">
     Stop
 </button>
-<button id="button-get-subject">
-    GET
+<button id="button-save">
+    Save
 </button>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
     var hours = 0;
@@ -46,13 +40,60 @@ This is the time recorder app (INDEX), the home/where you record times of subjec
 
     var buttonStart = document.getElementById("button-start")
     var buttonStop = document.getElementById("button-stop")
-    var buttonGetSub  =document.getElementById("button-get-subject")
+    var buttonSave  =document.getElementById("button-save")
+
+    var curSelectedSub = document.getElementById("subject-select")
+    var labelledSub = document.getElementById("selected-subject-lbl")
+    var curTimingSub = ""
 
     var interval; // store timer values
     var total = 0; // keeps track of the total time (To save)
+    var overallTime = 0; // total time, will also allow notification when to stand up
+    const TIME_TO_STAND = 60 * (20)
 
-    function startTimer() {
+    onload = () => {
+        labelledSub.innerHTML = "Selected subject: " + curSelectedSub.value
+        curTimingSub = curSelectedSub.value
+        if(!window.Notification) {
+            console.log('Browser does not support notifications.');
+        } else {
+            if (Notification.permission ==="granted") {
+                return;
+            } else {
+                Notification.requestPermission().then((p) => {
+                    if (p === "granted") {
+                        //show notif
+                    } else {
+                        console.log("User blocked notifications")
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
+            }
+        }
+    }
+
+    var isPaused = true;
+    buttonStart.onclick = () => {
+        startStopWatch()
+    }
+
+    buttonStop.onclick = () => {
+        pauseStopWatch()
+    }
+
+    buttonSave.onclick = () => {
+        saveData()
+    }
+
+    function showSelectedSubject() {
+        labelledSub.innerHTML = "Selected subject: " + curTimingSub
+    }
+
+    function stopWatch() {
         seconds++;
+        overallTime++;
+        total++;
         if (seconds < 10) {
             appendSecs.innerHTML = "0" + seconds;
         } else {
@@ -63,8 +104,11 @@ This is the time recorder app (INDEX), the home/where you record times of subjec
             appendSecs.innerHTML = "0";
             seconds=0;
             appendMins.innerHTML = "0" + minutes;
-            total+=60; // saves having to ++ total every second, now every minute
+            //total+=60; // saves having to ++ total every second, now every minute
             // where we can add logic to save time of the subject into the db...  
+        }
+        if (overallTime == TIME_TO_STAND) {
+            notifyToStand()
         }
         if (minutes > 9) {
             appendMins.innerHTML = minutes;
@@ -83,13 +127,69 @@ This is the time recorder app (INDEX), the home/where you record times of subjec
         }
     }
 
-    buttonStart.onclick = () => {
-        interval = setInterval(startTimer,1000)
+    async function saveTime() {
+        var newTotal = total.toString()
+        var url= '<%= process.env.SERVER %>';
+        var data = {time:total, subjectID:curTimingSub}
+        const URL = `${url}/saveTime`;
+
+        $(document).ready(function() {
+            $.ajax({
+                url: URL,
+                type: "POST",
+                data: data,
+                success: function(result) {
+                    console.log(result)
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            })
+        })
+        
     }
 
-    buttonGetSub.onclick = () => {
-        selectedSubject = document.getElementById("subject-select");
-        alert(selectedSubject.value);
+    function saveData() {
+        saveTime()
+        resetStopWatch()
+        curTimingSub = document.getElementById("subject-select").value
+        labelledSub.innerHTML = "Selected subject: " + curTimingSub
+        curTimingSub = curSelectedSub.value
+        showSelectedSubject()
+    }
+
+    function changeSubject() {
+        curTimingSub = curSelectedSub.value
+        showSelectedSubject()
+    }
+
+    function startStopWatch() {
+        if (curTimingSub == "") return; 
+        if (isPaused == true) {
+            interval = setInterval(stopWatch, 1000);
+            isPaused = false
+        }
+    }
+
+    function pauseStopWatch() {
+        if (curTimingSub == "") return;
+        if (!isPaused) {
+            clearInterval(interval)
+            isPaused = true
+        }
+    }
+
+    function resetStopWatch() {
+        clearInterval(interval)
+        hours=0;minutes=0;seconds=0;total=0;
+        appendHours.innerHTML = "00"
+        appendMins.innerHTML = "00"
+        appendSecs.innerHTML = "00"
+        isPaused = true
+    }
+
+    function notifyToStand() {
+        var notify = new Notification(TIME_TO_STAND/60 + " minutes is up, time to stand")
     }
 
 </script>
