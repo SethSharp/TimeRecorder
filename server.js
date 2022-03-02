@@ -11,7 +11,6 @@ const bodyParser = require("body-parser")
 
 const indexRouter = require("./routes/index")
 const subjectRouter = require("./routes/subjects")
-const recordTimeRouter = require("./routes/index")
 
 
 app.set("view engine", "ejs")
@@ -33,6 +32,5 @@ db.once("open", () => console.log("Connected to DB"))
 
 app.use("/", indexRouter)
 app.use("/subjects", subjectRouter)
-app.use("/recordTime", recordTimeRouter)
 
 app.listen(process.env.PORT || 3000);

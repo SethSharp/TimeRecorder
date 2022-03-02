@@ -3,6 +3,93 @@
 
 This is the time recorder app (INDEX), the home/where you record times of subjects
 
+
+<br>
+<br>
+
 <% subjects.forEach(subject => { %>
     <div> <%= subject.title %>  </div>
 <% }) %>
+
+<select id="subject-select">
+    <% subjects.forEach(subject => { %>
+        <option label="<%= subject.title %>" value="<%= subject.title %>">
+    <% }) %>
+</select>
+
+
+
+
+<p>
+    <span id="hours">00</span>:
+    <span id="minutes">00</span>:
+    <span id="seconds">00</span>
+</p>
+<button id="button-start">
+    Start
+</button>
+<button id="button-stop">
+    Stop
+</button>
+<button id="button-get-subject">
+    GET
+</button>
+
+<script>
+    var hours = 0;
+    var minutes = 0;
+    var seconds = 0;
+
+    var appendHours = document.getElementById("hours");
+    var appendMins = document.getElementById("minutes");
+    var appendSecs = document.getElementById("seconds");
+
+    var buttonStart = document.getElementById("button-start")
+    var buttonStop = document.getElementById("button-stop")
+    var buttonGetSub  =document.getElementById("button-get-subject")
+
+    var interval; // store timer values
+    var total = 0; // keeps track of the total time (To save)
+
+    function startTimer() {
+        seconds++;
+        if (seconds < 10) {
+            appendSecs.innerHTML = "0" + seconds;
+        } else {
+            appendSecs.innerHTML = seconds
+        }
+        if (seconds > 59) {
+            minutes++;
+            appendSecs.innerHTML = "0";
+            seconds=0;
+            appendMins.innerHTML = "0" + minutes;
+            total+=60; // saves having to ++ total every second, now every minute
+            // where we can add logic to save time of the subject into the db...  
+        }
+        if (minutes > 9) {
+            appendMins.innerHTML = minutes;
+        }
+        if (minutes > 59) {
+            minutes = 0;
+            hours++;
+            appendHours.innerHTML = "0" + hours
+            appendMins.innerHTML = "00" 
+        }
+        if (hours <= 9) {
+            appendHours.innerHTML = "0" + hours
+        }
+        if (hours > 9) {
+            appendHours.innerHTML = hours
+        }
+    }
+
+    buttonStart.onclick = () => {
+        interval = setInterval(startTimer,1000)
+    }
+
+    buttonGetSub.onclick = () => {
+        selectedSubject = document.getElementById("subject-select");
+        alert(selectedSubject.value);
+    }
+
+</script>
