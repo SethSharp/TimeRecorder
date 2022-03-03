@@ -1,0 +1,50 @@
+@import "shared/fonts.css";
+
+:root {
+    font-family: "Gotham Rounded";
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: darkgray;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: white;
+    padding: 14px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+    background-color: #111;
+    color: white;
+}
+
+li a:link {
+    text-decoration: none;
+}
+
+
+#hours, #minutes, #seconds {
+    font-size: 2rem;
+}

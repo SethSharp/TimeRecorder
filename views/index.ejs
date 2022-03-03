@@ -1,33 +1,35 @@
-<br>
-
-<select id="subject-select" onchange="changeSubject()">
-    <% subjects.forEach(subject => { %>
-        <option label="<%= subject.title %>" value="<%= subject.title %>">
-    <% }) %>
-</select>
-
-<br>
-
-<label id="selected-subject-lbl"> </label>
-
-<p>
-    <span id="hours">00</span>:
-    <span id="minutes">00</span>:
-    <span id="seconds">00</span>
-</p>
 
 
-<button id="button-start">
-    Start
-</button>
-<button id="button-stop">
-    Stop
-</button>
-<button id="button-save">
-    Save
-</button>
+<div class="container">
+    <div class="">
+        <select id="subject-select" onchange="changeSubject()">
+            <% subjects.forEach(subject => { %>
+                <option label="<%= subject.title %>" value="<%= subject.title %>">
+            <% }) %>
+        </select>
+    </div>
+    <div class="stop-watch">
+        <div class="timer">
+            <p>
+                <span id="hours">00</span>:
+                <span id="minutes">00</span>:
+                <span id="seconds">00</span>
+            </p>
+        </div>
+        <div class="timer-btns">
+            <button id="button-start" type="button" class="btn btn-primary">
+                Start
+            </button>
+            <button id="button-stop" type="button" class="btn btn-warning">
+                Pause
+            </button>
+            <button id="button-save" type="button" class="btn btn-success">
+                Save
+            </button>
+        </div>
+    </div>
+</div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
     var hours = 0;
@@ -43,7 +45,6 @@
     var buttonSave  =document.getElementById("button-save")
 
     var curSelectedSub = document.getElementById("subject-select")
-    var labelledSub = document.getElementById("selected-subject-lbl")
     var curTimingSub = ""
 
     var interval; // store timer values
@@ -52,7 +53,6 @@
     const TIME_TO_STAND = 60 * (20)
 
     onload = () => {
-        labelledSub.innerHTML = "Selected subject: " + curSelectedSub.value
         curTimingSub = curSelectedSub.value
         if(!window.Notification) {
             console.log('Browser does not support notifications.');
@@ -86,10 +86,6 @@
         saveData()
     }
 
-    function showSelectedSubject() {
-        labelledSub.innerHTML = "Selected subject: " + curTimingSub
-    }
-
     function stopWatch() {
         seconds++;
         overallTime++;
@@ -101,13 +97,13 @@
         }
         if (seconds > 59) {
             minutes++;
-            appendSecs.innerHTML = "0";
+            appendSecs.innerHTML = "00";
             seconds=0;
             appendMins.innerHTML = "0" + minutes;
             //total+=60; // saves having to ++ total every second, now every minute
             // where we can add logic to save time of the subject into the db...  
         }
-        if (overallTime == TIME_TO_STAND) {
+        if (overallTime % TIME_TO_STAND == 0) {
             notifyToStand()
         }
         if (minutes > 9) {
@@ -153,14 +149,11 @@
         saveTime()
         resetStopWatch()
         curTimingSub = document.getElementById("subject-select").value
-        labelledSub.innerHTML = "Selected subject: " + curTimingSub
         curTimingSub = curSelectedSub.value
-        showSelectedSubject()
     }
 
     function changeSubject() {
         curTimingSub = curSelectedSub.value
-        showSelectedSubject()
     }
 
     function startStopWatch() {

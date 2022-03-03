@@ -6,11 +6,6 @@ router.get("/", (req, res) => {
   res.render("subjects/index", { subject: new Subject() });
 });
 
-// New subject
-router.get("/new", (req, res) => {
-    res.render("subjects/new")
-})
-
 // Create a new subject
 router.post("/", async (req, res) => {
     const subject = new Subject({title:req.body.title})

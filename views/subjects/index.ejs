@@ -1,9 +1,11 @@
 
+<div class="container">
+    <h2> New subject </h2>
+    <form action="/subjects" method="POST">
+        <%- include ("_form_fields.ejs") %>
+        <br>
+        <a href="/"> Cancel </a>
+        <button type="submit" class="btn btn-primary"> Submit </button>
+    </form>
+</div>
 
-<h2> New subject </h2>
-<form action="/subjects" method="POST">
-    <%- include ("_form_fields.ejs") %>
-    <br>
-    <a href="/"> Cancel </a>
-    <button type="submit"> Submit </button>
-</form>
