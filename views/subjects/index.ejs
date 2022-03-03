@@ -2,10 +2,36 @@
 <div class="container">
     <h2> New subject </h2>
     <form action="/subjects" method="POST">
-        <%- include ("_form_fields.ejs") %>
+        <%- include ("_form_fields.ejs", {usage:"Add"}) %>
         <br>
         <a href="/"> Cancel </a>
-        <button type="submit" class="btn btn-primary"> Submit </button>
+        <button type="submit" class="btn btn-success"> Submit </button>
+    </form>
+</div>
+
+<br>
+
+<div class="container">
+    <h2> Edit subject </h2>
+    <form action="/subjects/edit" method="POST">
+        <%- include ("_form_fields.ejs", {usage:"Edit"}) %>
+        <br>
+        <%- include ("_form_fields.ejs", {usage:"Replace with"}) %>
+        <br>
+        <a href="/"> Cancel </a>
+        <button type="submit" class="btn btn-warning"> Change </button>
+    </form>
+</div>
+
+<br>
+
+<div class="container">
+    <h2> Delete subject </h2>
+    <form action="/subjects/delete" method="POST">
+        <%- include ("_form_fields.ejs", {usage:"Delete"}) %>
+        <br>
+        <a href="/"> Cancel </a>
+        <button type="submit" class="btn btn-danger"> Delete </button>
     </form>
 </div>
 

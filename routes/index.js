@@ -14,8 +14,7 @@ router.get("/", async (req, res) => {
     
 })
 
-router.post("/saveTime", (req, res) => {
-    console.log(req.body)
+router.post("/saveTime", async (req, res) => {
     var time = parseInt(req.body.time);
     var condition = { title: req.body.subjectID };
     var update = { $inc: { timeSpent: time } };

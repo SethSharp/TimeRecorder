@@ -11,7 +11,6 @@ router.post("/", async (req, res) => {
     const subject = new Subject({title:req.body.title})
     try {
         const newSubject = await subject.save()
-        console.log("Success");
         res.redirect("subjects");
     } catch {
         res.render("subjects/index", {
@@ -21,6 +20,30 @@ router.post("/", async (req, res) => {
     }
 })
 
+router.post("/edit", async (req, res) => {
+  try {
+    const query = {title: req.body.title[0]}
+    const editSub = await Subject.updateOne(query, {title:req.body.title[1]})
+    res.redirect("/subjects")
+  } catch {
+    res.render("/subjects", {
+      subject: new Subject(),
+      errorMessage: "Unable to edit"
+    })
+  }
+})
+
+router.post("/delete", async (req, res) => {
+  try {
+    const delSub = await Subject.deleteOne({title:req.body.title})
+    res.redirect("/subjects");
+  } catch {
+    res.render("subjects/index", {
+      subject: new Subject(),
+      errorMessage: "Error in deleting subject"
+    })
+  }
+})
 
 
 module.exports = router;

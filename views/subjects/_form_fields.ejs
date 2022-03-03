@@ -1,2 +1,8 @@
-<label> Name: </label>
+<label> 
+
+    <% if (locals.usage != null) { %>
+        <%= usage %>
+    <%}%>
+    :
+</label>
 <input type="text" name="title" value="<%= subject.title %>" >
