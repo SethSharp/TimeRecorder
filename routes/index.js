@@ -15,10 +15,18 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/saveTime", async (req, res) => {
-    var time = parseInt(req.body.time);
-    console.log(time)
     var condition = { title: req.body.subjectID };
-    var update = { $inc: { timeSpent: time } };
+    
+    
+    // MAY INCREASE M,S OVER 60
+    
+    var update = {
+      $inc: {
+        hours: req.body.hours,
+        minutes: req.body.minutes,
+        seconds: req.body.seconds,
+      },
+    };
     Subject.updateOne(condition, update, (err, subject) => {
         if (err) {
             console.log(err)

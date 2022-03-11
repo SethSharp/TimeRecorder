@@ -40,7 +40,7 @@
 
 <script>
     var hours = 0;
-    var minutes = 1;
+    var minutes = 0;
     var seconds = 0;
 
     var appendHours = document.getElementById("hours");
@@ -69,7 +69,6 @@
     var isPaused = true;
     worker.onmessage = function() {
         if (!isPaused) {
-            // startStopWatch()  
             stopWatch() 
         }
     }
@@ -95,17 +94,11 @@
         }
     }
 
-    buttonStart.onclick = () => {
-        startStopWatch()
-    }
+    buttonStart.onclick = () => { startStopWatch() }
 
-    buttonStop.onclick = () => {
-        pauseStopWatch()
-    }
+    buttonStop.onclick = () => { pauseStopWatch() }
 
-    buttonSave.onclick = () => {
-        saveData()
-    }
+    buttonSave.onclick = () => { saveData() }
 
     function stopWatch() {
         seconds++;
@@ -116,6 +109,7 @@
             appendSecs.innerHTML = seconds
         }
         if (seconds > 59) {
+            console.log("Incremented,...")
             minutes++;
             appendSecs.innerHTML = "00";
             seconds=0;
@@ -146,10 +140,22 @@
         }
     }
 
+    function saveData() {
+        saveTime()
+        resetStopWatch()
+        curTimingSub = document.getElementById("subject-select").value
+        curTimingSub = curSelectedSub.value
+    }
+
     function saveTime() {
+        console.log(minutes)
         var url= '<%= process.env.SERVER %>';
-        total = seconds + (minutes*60) + (hours*60*60)
-        var data = {time:total, subjectID:curTimingSub}
+        var data = {
+            hours:hours,
+            minutes:minutes,
+            seconds:seconds, 
+            subjectID:curTimingSub
+        }
         const URL = `${url}/saveTime`;
         $(document).ready(function() {
             $.ajax({
@@ -165,13 +171,6 @@
             })
         })
         console.log("Finished save")
-    }
-
-    function saveData() {
-        saveTime()
-        resetStopWatch()
-        curTimingSub = document.getElementById("subject-select").value
-        curTimingSub = curSelectedSub.value
     }
 
     function changeSubject() {
@@ -214,7 +213,5 @@
         }
         return total;
     }
-
-
 
 </script>

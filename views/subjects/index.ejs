@@ -1,3 +1,10 @@
+<div class="container">
+    <% if (locals.msg != null) { %>
+        <%- include("../partials/errorMessage.ejs", {errorMessage:msg}) %>
+    <%}%>
+</div>
+
+
 
 <div class="container">
     <h2> New subject </h2>

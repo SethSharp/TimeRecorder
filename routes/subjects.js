@@ -11,11 +11,14 @@ router.post("/", async (req, res) => {
     const subject = new Subject({title:req.body.title})
     try {
         const newSubject = await subject.save()
-        res.redirect("subjects");
+        res.render("subjects/index", {
+          subject: new Subject(),
+          msg: "Created subject: " + req.body.title,
+        });
     } catch {
         res.render("subjects/index", {
-          subject: subject,
-          errorMessage: "Error in creating subject",
+          subject: new Subject(),
+          msg: "Error in creating subject",
         });
     }
 })

@@ -1,0 +1,6 @@
+
+<div class="container">
+    <% subjects.forEach(subject => { %>
+        <%- include("./_subject_fields.ejs", {subject:subject}) %>
+    <% }) %>
+</div>

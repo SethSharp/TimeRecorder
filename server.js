@@ -12,7 +12,7 @@ const bodyParser = require("body-parser")
 
 const indexRouter = require("./routes/index")
 const subjectRouter = require("./routes/subjects")
-
+const timesRouter = require("./routes/times")
 
 app.set("view engine", "ejs")
 app.set("views", __dirname+"/views")
@@ -31,7 +31,8 @@ const db = mongoose.connection
 db.on("error", error => console.log(error))
 db.once("open", () => console.log("Connected to DB"))
 
-app.use("/", indexRouter)
-app.use("/subjects", subjectRouter)
+app.use("/", indexRouter);
+app.use("/subjects", subjectRouter);
+app.use("/times", timesRouter);
 
 app.listen(process.env.PORT || 3000);
