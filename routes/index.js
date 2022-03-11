@@ -16,6 +16,7 @@ router.get("/", async (req, res) => {
 
 router.post("/saveTime", async (req, res) => {
     var time = parseInt(req.body.time);
+    console.log(time)
     var condition = { title: req.body.subjectID };
     var update = { $inc: { timeSpent: time } };
     Subject.updateOne(condition, update, (err, subject) => {

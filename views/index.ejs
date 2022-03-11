@@ -8,6 +8,7 @@
             <% }) %>
         </select>
     </div>
+    
     <div class="stop-watch">
         <div class="timer">
             <p>
@@ -26,14 +27,20 @@
             <button id="button-save" type="button" class="btn btn-success">
                 Save
             </button>
+            <button id="button-test" type="button" class="btn btn-secondary">
+                Get test time
+            </button>
         </div>
     </div>
 </div>
 
+<script id="worker-code" type="dont/run">
+    setInterval(function() {postMessage("");}, 1000)
+</script>
 
 <script>
     var hours = 0;
-    var minutes = 0;
+    var minutes = 1;
     var seconds = 0;
 
     var appendHours = document.getElementById("hours");
@@ -43,14 +50,29 @@
     var buttonStart = document.getElementById("button-start")
     var buttonStop = document.getElementById("button-stop")
     var buttonSave  =document.getElementById("button-save")
+    var buttonTest  =document.getElementById("button-test")
 
     var curSelectedSub = document.getElementById("subject-select")
     var curTimingSub = ""
-
-    var interval; // store timer values
-    var total = 0; // keeps track of the total time (To save)
-    var overallTime = 0; // total time, will also allow notification when to stand up
+    
+    // keeps track of the total time of the subject (To save)
+    var total = 0; 
+    // Overall time is so when switching subjects, stand/break reminders
+    // will occur consistently with the required time
+    var overallTime = 0;
     const TIME_TO_STAND = 60 * (20)
+    const TIME_TO_BREAK = 60 * (40)
+
+    var blob = new Blob([document.querySelector('#worker-code').textContent]);
+    var worker = new Worker(window.URL.createObjectURL(blob));
+    
+    var isPaused = true;
+    worker.onmessage = function() {
+        if (!isPaused) {
+            // startStopWatch()  
+            stopWatch() 
+        }
+    }
 
     onload = () => {
         curTimingSub = curSelectedSub.value
@@ -73,7 +95,6 @@
         }
     }
 
-    var isPaused = true;
     buttonStart.onclick = () => {
         startStopWatch()
     }
@@ -89,7 +110,6 @@
     function stopWatch() {
         seconds++;
         overallTime++;
-        total++;
         if (seconds < 10) {
             appendSecs.innerHTML = "0" + seconds;
         } else {
@@ -104,7 +124,10 @@
             // where we can add logic to save time of the subject into the db...  
         }
         if (overallTime % TIME_TO_STAND == 0) {
-            notifyToStand()
+            notification("Time to stand up and stretch")
+        }
+        if (overallTime % TIME_TO_BREAK == 0) {
+            notification("Time to take a break from: ", curSelectedSub)
         }
         if (minutes > 9) {
             appendMins.innerHTML = minutes;
@@ -123,12 +146,11 @@
         }
     }
 
-    async function saveTime() {
-        var newTotal = total.toString()
+    function saveTime() {
         var url= '<%= process.env.SERVER %>';
+        total = seconds + (minutes*60) + (hours*60*60)
         var data = {time:total, subjectID:curTimingSub}
         const URL = `${url}/saveTime`;
-
         $(document).ready(function() {
             $.ajax({
                 url: URL,
@@ -142,7 +164,7 @@
                 }
             })
         })
-        
+        console.log("Finished save")
     }
 
     function saveData() {
@@ -159,7 +181,7 @@
     function startStopWatch() {
         if (curTimingSub == "") return; 
         if (isPaused == true) {
-            interval = setInterval(stopWatch, 1000);
+            // interval = setInterval(stopWatch, 1000);
             isPaused = false
         }
     }
@@ -167,13 +189,13 @@
     function pauseStopWatch() {
         if (curTimingSub == "") return;
         if (!isPaused) {
-            clearInterval(interval)
+            clearInterval(worker)
             isPaused = true
         }
     }
 
     function resetStopWatch() {
-        clearInterval(interval)
+        clearInterval(worker)
         hours=0;minutes=0;seconds=0;total=0;
         appendHours.innerHTML = "00"
         appendMins.innerHTML = "00"
@@ -181,8 +203,18 @@
         isPaused = true
     }
 
-    function notifyToStand() {
-        var notify = new Notification(TIME_TO_STAND/60 + " minutes is up, time to stand")
+    function notification(notif) {
+        var notify = new Notification(notif)
     }
+
+    function getAbsValue(startTime, endTime) {
+        var total = endTime - startTime
+        if (total < 0) {
+            return Math.abs(total);
+        }
+        return total;
+    }
+
+
 
 </script>
