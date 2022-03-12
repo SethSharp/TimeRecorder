@@ -15,24 +15,37 @@ router.get("/", async (req, res) => {
 })
 
 router.post("/saveTime", async (req, res) => {
-    var condition = { title: req.body.subjectID };
-    
-    
-    // MAY INCREASE M,S OVER 60
-    
-    var update = {
-      $inc: {
-        hours: req.body.hours,
-        minutes: req.body.minutes,
-        seconds: req.body.seconds,
-      },
-    };
-    Subject.updateOne(condition, update, (err, subject) => {
-        if (err) {
-            console.log(err)
-        } else {
-            res.json(subject)
+    try {
+        const selectedSubject = await Subject.findOne({title:req.body.subjectID})
+        var condition = { title: req.body.subjectID };
+        
+        console.log(req.body)
+        
+        // MAY INCREASE M,S OVER 60
+        var hours = parseInt(req.body.hours)
+        var minutes = parseInt(req.body.minutes)
+        var seconds = parseInt(req.body.seconds)
+
+        if (selectedSubject.seconds+seconds >= 60) {
+            seconds-=60
+            minutes++
         }
-    });
+        if (selectedSubject.minutes+minutes >= 60) {
+            minutes-=60
+            hours++
+        }
+
+        var update = {
+        $inc: {
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds,
+        },
+        };
+        await Subject.updateOne(condition, update)
+    } catch {
+        res.redirect("index")
+    }
+    
 })
 module.exports = router

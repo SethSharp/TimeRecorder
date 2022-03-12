@@ -27,9 +27,6 @@
             <button id="button-save" type="button" class="btn btn-success">
                 Save
             </button>
-            <button id="button-test" type="button" class="btn btn-secondary">
-                Get test time
-            </button>
         </div>
     </div>
 </div>
@@ -40,8 +37,8 @@
 
 <script>
     var hours = 0;
-    var minutes = 0;
-    var seconds = 0;
+    var minutes = 60;
+    var seconds = 48;
 
     var appendHours = document.getElementById("hours");
     var appendMins = document.getElementById("minutes");
@@ -141,6 +138,9 @@
     }
 
     function saveData() {
+        if (hours == 0 && minutes && minutes == 0 && seconds == 0) {
+            alert("Didnt save")
+        }
         saveTime()
         resetStopWatch()
         curTimingSub = document.getElementById("subject-select").value
