@@ -18,10 +18,7 @@ router.post("/saveTime", async (req, res) => {
     try {
         const selectedSubject = await Subject.findOne({title:req.body.subjectID})
         var condition = { title: req.body.subjectID };
-        
-        console.log(req.body)
-        
-        // MAY INCREASE M,S OVER 60
+
         var hours = parseInt(req.body.hours)
         var minutes = parseInt(req.body.minutes)
         var seconds = parseInt(req.body.seconds)
