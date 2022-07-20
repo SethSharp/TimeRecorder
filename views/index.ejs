@@ -24,6 +24,9 @@
             <button id="button-stop" type="button" class="btn btn-warning">
                 Pause
             </button>
+            <button id="button-reset" type="button" class="btn btn-danger">
+                Reset
+            </button>
             <button id="button-save" type="button" class="btn btn-success">
                 Save
             </button>
@@ -46,6 +49,7 @@
 
     var buttonStart = document.getElementById("button-start")
     var buttonStop = document.getElementById("button-stop")
+    var buttonReset = document.getElementById("button-reset")
     var buttonSave = document.getElementById("button-save")
     var buttonTest = document.getElementById("button-test")
 
@@ -96,6 +100,8 @@
     buttonStop.onclick = () => { pauseStopWatch() }
 
     buttonSave.onclick = () => { saveData() }
+
+    buttonReset.onclick = () => { resetStopWatch() }
 
     function stopWatch() {
         seconds++;
