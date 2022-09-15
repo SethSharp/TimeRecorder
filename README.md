@@ -7,5 +7,4 @@ npm i
 Create a .env file in the root and add:
   LOCAL_DB=mongodb://localhost:27017/timeRecorder
   PORT=3000
-Table name is up to you
-node server.js
+Run node server.js
